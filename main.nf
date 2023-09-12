@@ -2,9 +2,10 @@ params.input = "input/file1.txt"
 
 
 workflow {
-    input_files = channel.fromPath(params.input)
+    times = channel.value(45)
     value = channel.value(37)
-    SUBWORKFLOW(value)
+    input_files = channel.fromPath(params.input)
+    SUBWORKFLOW(value, times)
     NUM_LINES(input_files, SUBWORKFLOW.out)
     NUM_LINES.out.view()
 }
@@ -12,9 +13,10 @@ workflow {
 workflow SUBWORKFLOW {
     take:
         value
+        times
 
     main:
-        DUPLICATE_NUMBER(value)
+        DUPLICATE_NUMBER(value, times)
     
     emit:
         DUPLICATE_NUMBER.out
@@ -24,13 +26,14 @@ workflow SUBWORKFLOW {
 process DUPLICATE_NUMBER {
     input:
     val(start_value)
+    val(times)
 
     output:
     stdout
 
     script:
     """
-    printf '${start_value}${start_value}'
+    printf '${start_value}%.0s' {1..${times}}
     """
 }
 
