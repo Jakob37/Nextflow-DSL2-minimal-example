@@ -1,25 +1,51 @@
 params.input = "input/file1.txt"
 
-// A workflow is a sequence of tasks that process a set of data
 
 workflow {
-    input_ch = Channel.fromPath(params.input)
-
-    NUM_LINES(input_ch)
-
+    input_files = channel.fromPath(params.input)
+    value = channel.value(37)
+    SUBWORKFLOW(value)
+    NUM_LINES(input_files, SUBWORKFLOW.out)
     NUM_LINES.out.view()
 }
 
-process NUM_LINES {
+workflow SUBWORKFLOW {
+    take:
+        value
+
+    main:
+        DUPLICATE_NUMBER(value)
+    
+    emit:
+        DUPLICATE_NUMBER.out
+
+}
+
+process DUPLICATE_NUMBER {
     input:
-    path read
+    val(start_value)
 
     output:
     stdout
 
     script:
     """
-    printf '${read} '
-    cat ${read} | wc
+    printf '${start_value}${start_value}'
     """
 }
+
+process NUM_LINES {
+    input:
+    path(input_ch)
+    val(test_value)
+
+    output:
+    stdout
+
+    script:
+    """
+    printf '${input_ch} ${test_value} '
+    cat ${input_ch} | wc
+    """
+}
+
