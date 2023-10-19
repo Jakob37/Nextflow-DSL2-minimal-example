@@ -33,6 +33,9 @@ process DUPLICATE_NUMBER {
 
     script:
     """
+    echo "content" > testfile.txt
+    sed s/ent\$/test/ testfile.txt 
+    echo "testing"
     printf '${start_value}%.0s' {1..${times}}
     """
 }

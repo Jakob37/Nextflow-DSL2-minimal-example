@@ -1,0 +1,2 @@
+sample,lane,fastq_1,fastq_2,sex,phenotype,paternal_id,maternal_id,case_id
+giab_sample,1,data/fasta1.fq.gz,data/fasta2.fq.gz,1,2,,,giab_full
