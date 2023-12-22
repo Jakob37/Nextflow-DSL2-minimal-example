@@ -4,6 +4,37 @@ nextflow.enable.dsl = 1
 
 ch_versions = Channel.of(1, 2, 3)
 
+a_ch = Channel.fromPath(params.a)
+println("Top print")
+println("a_ch ${a_ch}")
+
+// ch_readcount_intervals      = params.readcount_intervals ? 
+//     Channel.fromPath(params.readcount_intervals).collect() : "empty string"
+
+
+// ch_readcount_intervals      = params.readcount_intervals ? 
+//     Channel.fromPath(params.readcount_intervals).collect() : 
+//     ( ch_references.readcount_intervals ?: Channel.empty() )
+
+ch_readcount_intervals = Channel.fromPath(params.readcount_intervals).toList() 
+// ch_readcount_intervals = Channel.fromPath(params.readcount_intervals).collect() 
+
+// if (params.readcount_intervals) {
+//     ch_readcount_intervals = Channel.fromPath(params.readcount_intervals).collect()
+// } else {
+//     ch_readcount_intervals = "empty"
+// }
+
+    // ( ch_references.readcount_intervals ?: Channel.empty() )
+// println("ch_readcount_intervals ${ch_readcount_intervals}")
+// println(Channel.fromPath(params.readcount_intervals))
+// println("direct test ${Channel.fromPath(params.readcount_intervals).toList()}")
+// // println("direct test ${Channel.fromPath(params.readcount_intervals).collect()}")
+// println(params.readcount_intervals ? "first" : "second")
+// println("------")
+// println(params.readcount_intervals ? Channel.fromPath(params.readcount_intervals).collect() : ( ch_references.readcount_intervals ?: "empty" ))
+
+
 process ch_fastp_versions {
 
     input:
@@ -20,6 +51,7 @@ process ch_fastp_versions {
     // echo "!{version_str}" > fastp_version_!{version}.txt
     // '''
     script:
+    print("Printing from inside script ${version}")
     version_str=version_fn(task)
     """
     echo "${version_str}" >> fastp_version_${version}.txt
